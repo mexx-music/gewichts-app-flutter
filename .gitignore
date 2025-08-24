@@ -1,14 +1,24 @@
+# Flutter/Dart
 .dart_tool/
 .packages
 .pub-cache/
 .pub/
+.flutter-plugins
+.flutter-plugins-dependencies
 build/
-android/.gradle/
-android/app/build/
-**/*.apk
-**/*.aab
+
+# iOS
 ios/Pods/
 ios/.symlinks/
+
+# Android
+android/.gradle/
+android/app/build/
+
+# Windows (ephemeral)
+windows/flutter/ephemeral/
+
+# IDE/Editor
 .idea/
 .vscode/
 *.iml
