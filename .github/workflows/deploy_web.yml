@@ -8,18 +8,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        with: { fetch-depth: 0 }
 
-      - uses: subosito/flutter-action@v2
+      - name: Set up Flutter (stable, pinned)
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.3'
 
-      - run: flutter config --enable-web
-      - run: flutter pub get
-      - run: flutter build web --release --base-href=/
+      - name: Flutter doctor
+        run: |
+          flutter --version
+          dart --version
+          flutter doctor -v
 
-      - uses: peaceiris/actions-gh-pages@v3
+      - name: Get packages
+        run: flutter pub get
+
+      - name: Build web (verbose)
+        run: flutter build web --release --base-href=/ --verbose
+
+      - name: Publish to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: build/web
