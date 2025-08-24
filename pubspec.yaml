@@ -4,12 +4,12 @@ version: 0.1.0
 publish_to: "none"
 
 environment:
-  sdk: ">=3.5.0 <4.0.0"   # wichtig wegen Record-Typen ( (double a, double b) )
+  sdk: ">=3.5.0 <4.0.0"   # wichtig wegen Records ( (double a, double b) )
 
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences: ^2.3.2
+  shared_preferences: ^2.5.3
   cupertino_icons: ^1.0.8
 
 dev_dependencies:
