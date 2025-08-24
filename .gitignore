@@ -1,9 +1,14 @@
-# Lokal
-flutter --version   # sicherstellen, dass Flutter installiert ist
-flutter create gewichts_app
-cd gewichts_app
-git init
-git remote add origin https://github.com/<dein-user>/gewichts-app-flutter.git
-git add .
-git commit -m "chore: initial flutter app"
-git push -u origin main
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+android/.gradle/
+android/app/build/
+**/*.apk
+**/*.aab
+ios/Pods/
+ios/.symlinks/
+.idea/
+.vscode/
+*.iml
