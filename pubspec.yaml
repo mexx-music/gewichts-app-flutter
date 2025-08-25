@@ -56,7 +56,9 @@ jobs:
       - name: Enable web & get packages
         run: |
           flutter config --enable-web
-          flutter create --platforms=web .
+          if [ ! -f web/index.html ]; then
+          flutter create --platforms=web --project-name gewichts_app_flutter .
+          fi
           flutter pub get
           flutter doctor -v
 
