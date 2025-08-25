@@ -22,7 +22,6 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      # Debug: zeigen, was im Root liegt + pubspec Kopf
       - name: Show repo & pubspec header (with invisible chars)
         run: |
           pwd
@@ -34,16 +33,14 @@ jobs:
           echo "---- grep name ----"
           grep -n '^name:' pubspec.yaml || true
 
-      # Safety: Paketnamen im CI notfalls erzwingen (ohne Quotes/Binde­striche)
       - name: Force valid package name in pubspec (CI only)
         run: |
           perl -0777 -pe 's/^\s*name\s*:\s*"?[a-zA-Z0-9_-]+"?/name: gewichts_app_flutter/sm' pubspec.yaml > pubspec.yaml.fixed
-          tr -d '\r' < pubspec.yaml.fixed > pubspec.yaml   # CRLF -> LF
+          tr -d '\r' < pubspec.yaml.fixed > pubspec.yaml
           rm -f pubspec.yaml.fixed
           echo "---- pubspec after fix (first 3 lines) ----"
           head -n 3 pubspec.yaml | cat -A
 
-      # lib/main.dart muss existieren
       - name: Ensure lib/main.dart exists
         run: |
           test -f lib/main.dart && echo "OK: lib/main.dart" || (echo "MISSING: lib/main.dart"; exit 1)
