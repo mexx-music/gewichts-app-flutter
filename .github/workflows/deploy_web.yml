@@ -4,7 +4,6 @@ on:
     branches: [ main ]
   workflow_dispatch: {}
 
-# Benötigte Rechte für Pages-Deploy (kein Repo-Schreibzugriff nötig)
 permissions:
   contents: read
   pages: write
@@ -20,6 +19,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Debug: zeigen, was wirklich im Repo liegt
+      - name: Show repo root
+        run: |
+          pwd
+          ls -la
+          echo "---- pubspec.yaml (first 8 lines) ----"
+          head -n 8 pubspec.yaml || true
+          echo "---- name line ----"
+          grep '^name:' pubspec.yaml || true
+          echo "---- check for lib/main.dart ----"
+          test -f lib/main.dart && echo "OK: lib/main.dart exists" || (echo "MISSING: lib/main.dart"; exit 1)
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -30,11 +41,11 @@ jobs:
           flutter config --enable-web
           flutter create --platforms=web .
           flutter pub get
+          flutter doctor -v
 
-      - name: Build web (release)
-        run: flutter build web --release --base-href=/
+      - name: Build web (release, verbose)
+        run: flutter build web --release --base-href=/ --verbose
 
-      # Statisches Web-Build als Pages-Artefakt hochladen
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
