@@ -1,7 +1,6 @@
 name: Deploy Flutter Web to GitHub Pages
 on:
-  push:
-    branches: [ main ]
+  push: { branches: [ main ] }
   workflow_dispatch: {}
 
 permissions:
@@ -19,17 +18,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Debug: zeigen, was wirklich im Repo liegt
-      - name: Show repo root
+      # Debug: alle pubspec.yaml finden und Namen anzeigen
+      - name: Locate pubspec files
         run: |
-          pwd
-          ls -la
-          echo "---- pubspec.yaml (first 8 lines) ----"
-          head -n 8 pubspec.yaml || true
-          echo "---- name line ----"
-          grep '^name:' pubspec.yaml || true
-          echo "---- check for lib/main.dart ----"
-          test -f lib/main.dart && echo "OK: lib/main.dart exists" || (echo "MISSING: lib/main.dart"; exit 1)
+          echo "Repo root:"; pwd; ls -la
+          echo "---- pubspecs found ----"
+          git ls-files | grep -E '^(.*/)?pubspec\.yaml$' || true
+          echo "---- names in each pubspec ----"
+          for f in $(git ls-files | grep -E '^(.*/)?pubspec\.yaml$'); do
+            echo "[$f]"; grep -E '^name:' "$f" || true; echo
+          done
+
+      # Fix erzwingen: Root-pubspec auf gültigen Namen setzen (ohne Quotes/Bindestriche)
+      - name: Force valid package name in root pubspec
+        run: |
+          test -f pubspec.yaml || (echo "MISSING: pubspec.yaml at repo root" && exit 1)
+          # Zeile 1 auf gültigen Namen setzen:
+          awk 'NR==1{$0="name: gewichts_app_flutter"} {print}' pubspec.yaml > pubspec.yaml.fixed
+          mv pubspec.yaml.fixed pubspec.yaml
+          echo "Result first lines:"; head -n 5 pubspec.yaml
+
+      # Sicherstellen, dass lib/main.dart existiert
+      - name: Ensure lib/main.dart exists
+        run: |
+          if [ ! -f lib/main.dart ]; then
+            echo "MISSING: lib/main.dart"; exit 1
+          fi
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -43,8 +57,8 @@ jobs:
           flutter pub get
           flutter doctor -v
 
-      - name: Build web (release, verbose)
-        run: flutter build web --release --base-href=/ --verbose
+      - name: Build web (release)
+        run: flutter build web --release --base-href=/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -58,6 +72,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
