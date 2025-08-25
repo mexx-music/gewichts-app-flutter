@@ -51,13 +51,10 @@ jobs:
           flutter-version: '3.24.3'
 
       - name: Enable web & get packages
-        run: |
-          flutter config --enable-web
-          if [ ! -f web/index.html ]; then
-            flutter create --platforms=web --project-name gewichts_app_flutter .
-          fi
-          flutter pub get
-          flutter doctor -v
+  run: |
+    flutter config --enable-web
+    flutter pub get
+    flutter doctor -v
 
       - name: Build web (release)
         run: flutter build web --release --base-href=/
