@@ -2,7 +2,7 @@ name: Deploy Flutter Web to GitHub Pages
 on:
   push: { branches: [ main ] }
   workflow_dispatch: {}
-these   rules name.: The gew recommended name isichts_app_flutter
+
 permissions:
   contents: read
   pages: write
@@ -51,10 +51,10 @@ jobs:
           flutter-version: '3.24.3'
 
       - name: Enable web & get packages
-  run: |
-    flutter config --enable-web
-    flutter pub get
-    flutter doctor -v
+        run: |
+          flutter config --enable-web
+          flutter pub get
+          flutter doctor -v
 
       - name: Build web (release)
         run: flutter build web --release --base-href=/
